@@ -10,6 +10,8 @@ jobs:
     steps:
     - name: Check out the repository
       uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
@@ -20,11 +22,11 @@ jobs:
       run: npm install
 
     - name: Commit and push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         git add package-lock.json
-        git commit -m "Generate new package-lock.json via GitHub Action"
-        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        git commit -m "Generate new package-lock.json via GitHub Action" || exit 0 # Ignore if no changes
+        git push origin HEAD:main
