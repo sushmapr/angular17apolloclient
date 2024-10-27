@@ -1,0 +1,30 @@
+name: Generate Package Lock
+
+on:
+  workflow_dispatch: # Allows you to manually trigger the workflow
+
+jobs:
+  generate-lock-file:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16' # Specify your Node version here
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add package-lock.json
+        git commit -m "Generate new package-lock.json via GitHub Action"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
